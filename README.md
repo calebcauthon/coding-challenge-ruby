@@ -42,6 +42,11 @@ To make sure it's all working,
 
 You should see this same information.
 
+## Docker Setup
+
+`docker build -t rails .`
+`docker run -it -p 3000:3000 rails`
+
 ## Submitting your project
 
 Share a link to your repository so we can review your commit history and final solution.  If you need to add any additional instructions to the README please put them at the very top of that file and mention.  Expect to discuss your design decisions during the interview.
