@@ -42,6 +42,23 @@ class ApplicationControllerSingleQuestionsEndpointTest < ActionController::TestC
     assert_equal 'answer-1', JSON.parse(response.body)['answers'][0]['body']
     assert_equal 'answer-2', JSON.parse(response.body)['answers'][1]['body']
   end
+
+  test "should increment the api request count for the tenant when getting a question" do
+    question = Question.create!(share: true, title: 'question-4', user: User.new)
+
+    tenant1 = Tenant.create! name: 'tenant-1'
+    tenant2 = Tenant.create! name: 'tenant-2'
+    tenant3 = Tenant.create! name: 'tenant-3'
+    get :question, { params: { id: question.id, tenant_id: tenant2.id, api_key: tenant2.api_key } }
+
+    tenant1 = Tenant.where(name: 'tenant-1').first
+    tenant2 = Tenant.where(name: 'tenant-2').first
+    tenant3 = Tenant.where(name: 'tenant-3').first
+
+    assert_equal 0, tenant1.api_request_count
+    assert_equal 1, tenant2.api_request_count
+    assert_equal 0, tenant3.api_request_count
+  end
 end
 
 class ApplicationControllerAllQuestionsEndpointTest < ActionController::TestCase

@@ -3,6 +3,12 @@ class ApplicationController < ActionController::Base
     question = Question.where({ share: true }).first
     return head :no_content if question.nil?
 
+    tenant = Tenant.where(id: params['tenant_id'].to_i).first
+    if tenant
+      tenant.api_request_count = tenant.api_request_count + 1
+      tenant.save!
+    end
+
     return render json: question.to_json(include: [:user, :answers])
   end
 
