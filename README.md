@@ -3,10 +3,12 @@
 ## Docker Setup
 
 `docker build -t rails .`
+
 `docker run -it -p 3000:3000 rails`
 
 ## Run tests
 `docker build -t rails .`
+
 `docker run rails rake test`
 
 # BacklotCars Rails Engineer Candidate Interview Project
