@@ -24,11 +24,6 @@ class QuestionsController < ApplicationController
     return forbidden_status unless tenant && params['api_key'] == tenant.api_key
   end
 
-  def api_key_missing?
-    tenant = Tenant.where(id: params['tenant_id'].to_i).first
-    return true unless tenant && params['api_key'] == tenant.api_key
-  end
-
   def forbidden_status
     return render json: {}, status: :forbidden
   end
