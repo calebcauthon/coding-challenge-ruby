@@ -11,10 +11,18 @@ class ApplicationControllerSingleQuestionsEndpointTest < ActionController::TestC
   end
 
   test "should return questions that are shareable" do
-    question = Question.create!(share: true, title: 'question-1', user: User.new)
+    is_question_shareable = true
+    question = Question.create!(share: is_question_shareable, title: 'question-1', user: User.new)
 
     get_authorized 'question', { params: { id: question.id } }
     assert_equal 'question-1', JSON.parse(response.body)['title']
+  end
+
+  test "should *only* return questions that are shareable" do
+    is_question_shareable = false
+    question = Question.create!(share: is_question_shareable, title: 'question-2', user: User.new)
+    get_authorized 'question', { params: { id: question.id } }
+    assert_response 204
   end
 end
 

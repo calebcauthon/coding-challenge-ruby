@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   def question
-    question = Question.where({ id: params['id'] }).first
+    question = Question.where({ share: true }).first
     return head :no_content if question.nil?
 
     return render json: question.to_json
