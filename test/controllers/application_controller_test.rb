@@ -2,20 +2,26 @@ require 'test_helper'
 require 'json'
 
 class ApplicationControllerTest < ActionController::TestCase
+  def get_authorized *params
+    tenant = Tenant.create! name: 'tenant-authorized-1'
+    params[1] = { params: { api_key: tenant.api_key, tenant_id: tenant.id } }
+    get *params
+  end
+
   test "should return no content if there are no questions" do
-    get :questions
+    get_authorized :questions
     assert_response 204
   end
 
   test "should return questions that are shareable" do
     Question.create!(share: true, title: 'question-1', user: User.new)
-    get :questions
+    get_authorized :questions
     assert_equal 1, JSON.parse(response.body).count
   end
 
   test "should *only* return questions that are shareable" do
     Question.create!(share: false, title: 'question-2', user: User.new)
-    get :questions
+    get_authorized :questions
     assert_response 204
   end
 
@@ -23,7 +29,7 @@ class ApplicationControllerTest < ActionController::TestCase
     user = User.create!(name: 'asker')
     Question.create!(share: true, title: 'question-3', user_id: user.id)
 
-    get :questions
+    get_authorized :questions
     assert_equal 'asker', JSON.parse(response.body).first['user']['name']
   end
 
@@ -32,7 +38,7 @@ class ApplicationControllerTest < ActionController::TestCase
     Answer.create!(body: 'answer-1', question: question, user: User.new)
     Answer.create!(body: 'answer-2', question: question, user: User.new)
 
-    get :questions
+    get_authorized :questions
     assert_equal 'answer-1', JSON.parse(response.body).first['answers'][0]['body']
     assert_equal 'answer-2', JSON.parse(response.body).first['answers'][1]['body']
   end
@@ -46,7 +52,7 @@ class ApplicationControllerTest < ActionController::TestCase
     tenant1 = Tenant.create! name: 'tenant-1'
     tenant2 = Tenant.create! name: 'tenant-2'
     tenant3 = Tenant.create! name: 'tenant-3'
-    get :questions, { params: { tenant_id: tenant2.id } }
+    get :questions, { params: { tenant_id: tenant2.id, api_key: tenant2.api_key } }
 
     tenant1 = Tenant.where(name: 'tenant-1').first
     tenant2 = Tenant.where(name: 'tenant-2').first
@@ -55,5 +61,26 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_equal 0, tenant1.api_request_count
     assert_equal 1, tenant2.api_request_count
     assert_equal 0, tenant3.api_request_count
+  end
+
+  test "should return 2xx if correct api_key is included" do
+    tenant1 = Tenant.create! name: 'tenant-10'
+    tenant2 = Tenant.create! name: 'tenant-20'
+    tenant3 = Tenant.create! name: 'tenant-30'
+    get :questions, { params: { api_key: tenant2.api_key, tenant_id: tenant2.id } }
+    assert_response 204
+  end
+
+  test "should return 403 if tenant api_key is not included" do
+    get :questions
+    assert_response 403
+  end
+
+  test "should return 403 if incorrect api_key is not included" do
+    tenant1 = Tenant.create! name: 'tenant-10'
+    tenant2 = Tenant.create! name: 'tenant-20'
+    tenant3 = Tenant.create! name: 'tenant-30'
+    get :questions, { params: { api_key: tenant1.api_key, tenant_id: tenant2.id } }
+    assert_response 403
   end
 end
