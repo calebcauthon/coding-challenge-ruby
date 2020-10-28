@@ -34,6 +34,22 @@
           <td id="answer-count"><%= answer_count %></td>
         </tr>
       </table>
+
+      <h1>Tenant Overview</h1>
+      <table class="table table-bordered">
+        <thead class="thead-dark">
+          <th scope="col">Tenant</th>
+          <th scope="col">API Request Count</th>
+        </thead>
+        <tbody>
+          <% tenants.each do |tenant| %>
+          <tr>
+            <td class="tenant-name"><%= tenant.name %></td>
+            <td class="tenant-request-count" data-tenant-id="<%= tenant.id %>"><%= tenant.api_request_count.to_i %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
     </tbody>
   </body>
 </html>

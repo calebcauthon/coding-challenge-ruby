@@ -35,4 +35,14 @@ class WelcomeControllerTest < ActionController::TestCase
 
     assert_select "td#answer-count", '6'
   end
+
+  test "should include api request count for each tenant" do
+    tenant1 = Tenant.create!(name: 'Tenant One', api_request_count: 30)
+    tenant2 = Tenant.create!(name: 'Tenant Two', api_request_count: 40)
+    get :dashboard
+    assert_select "td.tenant-name", "Tenant One"
+    assert_select "td.tenant-request-count[data-tenant-id=#{tenant1.id}]", "30"
+    assert_select "td.tenant-name", "Tenant Two"
+    assert_select "td.tenant-request-count[data-tenant-id=#{tenant2.id}]", "40"
+  end
 end
