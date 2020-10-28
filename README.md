@@ -9,6 +9,10 @@
 `docker build -t rails .`
 `docker run rails rake test`
 
+# Endpoints
+All questions for a tenant: `localhost:3000/questions?tenant_id=<TENANT_ID>&api_key=<API_KEY>`
+One question: `localhost:3000/questions?tenant_id=<TENANT_ID>&api_key=<API_KEY>`
+
 # BacklotCars Rails Engineer Candidate Interview Project
 
 Thanks for taking the time to complete this exercise. We're excited that you're considering joining our amazing team.
