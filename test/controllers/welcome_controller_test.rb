@@ -25,4 +25,14 @@ class WelcomeControllerTest < ActionController::TestCase
 
     assert_select "td#question-count", '5'
   end
+
+  test "should include total number of answers" do
+    6.times do
+      Answer.create! body: 'body', question: Question.new(title: 'title'), user: User.new
+    end
+
+    get :dashboard
+
+    assert_select "td#answer-count", '6'
+  end
 end
