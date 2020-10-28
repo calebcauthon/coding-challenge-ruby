@@ -32,6 +32,16 @@ class ApplicationControllerSingleQuestionsEndpointTest < ActionController::TestC
     get_authorized 'question', { params: { id: question.id } }
     assert_equal 'asker', JSON.parse(response.body)['user']['name']
   end
+
+  test "should return the answers to the question" do
+    question = Question.create!(share: true, title: 'question-4', user: User.new)
+    Answer.create!(body: 'answer-1', question: question, user: User.new)
+    Answer.create!(body: 'answer-2', question: question, user: User.new)
+
+    get_authorized 'question', { params: { id: question.id } }
+    assert_equal 'answer-1', JSON.parse(response.body)['answers'][0]['body']
+    assert_equal 'answer-2', JSON.parse(response.body)['answers'][1]['body']
+  end
 end
 
 class ApplicationControllerAllQuestionsEndpointTest < ActionController::TestCase

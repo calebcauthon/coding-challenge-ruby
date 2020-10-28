@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
     question = Question.where({ share: true }).first
     return head :no_content if question.nil?
 
-    return render json: question.to_json(include: [:user])
+    return render json: question.to_json(include: [:user, :answers])
   end
 
   def questions
