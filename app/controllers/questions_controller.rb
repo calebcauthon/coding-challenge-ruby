@@ -1,6 +1,7 @@
 class QuestionsController < ApplicationController
+  before_action :require_api_key
+
   def question
-    return forbidden_status if api_key_missing?
     increment_api_request_count!
 
     question = Question.where({ share: true, id: params['id'] }).first
@@ -10,7 +11,6 @@ class QuestionsController < ApplicationController
   end
 
   def questions
-    return forbidden_status if api_key_missing?
     increment_api_request_count!
     questions = Question.where :share => true
 
@@ -20,6 +20,10 @@ class QuestionsController < ApplicationController
   end
 
   private
+  def require_api_key
+    tenant = Tenant.where(id: params['tenant_id'].to_i).first
+    return forbidden_status unless tenant && params['api_key'] == tenant.api_key
+  end
 
   def api_key_missing?
     tenant = Tenant.where(id: params['tenant_id'].to_i).first
