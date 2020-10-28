@@ -1,17 +1,16 @@
 class QuestionsController < ApplicationController
   before_action :require_api_key
+  before_action :increment_api_request_count!
 
   def question
-    increment_api_request_count!
-
     question = Question.where({ share: true, id: params['id'] }).first
+
     return head :no_content if question.nil?
 
     render_question question
   end
 
   def questions
-    increment_api_request_count!
     questions = Question.where :share => true
 
     return head :no_content unless questions.count > 0
