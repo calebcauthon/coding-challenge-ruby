@@ -1,3 +1,14 @@
+# NEW: Docker
+
+## Docker Setup
+
+`docker build -t rails .`
+`docker run -it -p 3000:3000 rails`
+
+## Run tests
+`docker build -t rails .`
+`docker run rails rake test`
+
 # BacklotCars Rails Engineer Candidate Interview Project
 
 Thanks for taking the time to complete this exercise. We're excited that you're considering joining our amazing team.
@@ -41,15 +52,6 @@ To make sure it's all working,
 `rails s`
 
 You should see this same information.
-
-## Docker Setup
-
-`docker build -t rails .`
-`docker run -it -p 3000:3000 rails`
-
-## Run tests
-`docker build -t rails .`
-`docker run rails rake test`
 
 ## Submitting your project
 
