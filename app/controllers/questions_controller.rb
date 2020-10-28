@@ -5,7 +5,7 @@ class QuestionsController < ApplicationController
   def questions
     all_questions = shareable_questions
 
-    return head :no_content unless all_questions.count > 0
+    return empty_response unless all_questions.count > 0
 
     render_question all_questions
   end
@@ -13,12 +13,16 @@ class QuestionsController < ApplicationController
   def question
     one_question = shareable_questions.where({ id: params['id'] }).first
 
-    return head :no_content if one_question.nil?
+    return empty_response if one_question.nil?
 
     render_question one_question
   end
 
   private
+  def empty_response
+    head :no_content
+  end
+
   def shareable_questions
     Question.where :share => true
   end
