@@ -3,19 +3,19 @@ class QuestionsController < ApplicationController
   before_action :increment_api_request_count!
 
   def question
-    question = Question.where({ share: true, id: params['id'] }).first
+    one_question = Question.where({ share: true, id: params['id'] }).first
 
-    return head :no_content if question.nil?
+    return head :no_content if one_question.nil?
 
-    render_question question
+    render_question one_question
   end
 
   def questions
-    questions = Question.where :share => true
+    all_questions = Question.where :share => true
 
-    return head :no_content unless questions.count > 0
+    return head :no_content unless all_questions.count > 0
 
-    render_question questions
+    render_question all_questions
   end
 
   private
