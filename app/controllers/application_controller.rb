@@ -8,17 +8,19 @@ class ApplicationController < ActionController::Base
     return render json: {}, status: :forbidden
   end
 
+  def increment_api_request_count!
+    tenant = Tenant.where(id: params['tenant_id'].to_i).first
+    tenant.api_request_count = tenant.api_request_count + 1
+    tenant.save!
+  end
+
   def question
     return forbidden_status if api_key_missing?
 
     question = Question.where({ share: true }).first
     return head :no_content if question.nil?
 
-    tenant = Tenant.where(id: params['tenant_id'].to_i).first
-    if tenant
-      tenant.api_request_count = tenant.api_request_count + 1
-      tenant.save!
-    end
+    increment_api_request_count!
 
     return render json: question.to_json(include: [:user, :answers])
   end
@@ -28,11 +30,7 @@ class ApplicationController < ActionController::Base
 
     questions = Question.where :share => true
 
-    tenant = Tenant.where(id: params['tenant_id'].to_i).first
-    if tenant
-      tenant.api_request_count = tenant.api_request_count + 1
-      tenant.save!
-    end
+    increment_api_request_count!
 
     return head :no_content unless questions.count > 0
 
