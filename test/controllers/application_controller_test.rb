@@ -13,7 +13,7 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_equal 1, JSON.parse(response.body).count
   end
 
-  test "should not return questions that are not shareable" do
+  test "should *only* return questions that are shareable" do
     Question.create!(share: false, title: 'question', user: User.new)
     get :questions
     assert_response 204
