@@ -1,7 +1,15 @@
 class ApplicationController < ActionController::Base
-  def question
+  def api_key_missing?
     tenant = Tenant.where(id: params['tenant_id'].to_i).first
-    return render json: {}, status: :forbidden unless tenant && params['api_key'] == tenant.api_key
+    return true unless tenant && params['api_key'] == tenant.api_key
+  end
+
+  def forbidden_status
+    return render json: {}, status: :forbidden
+  end
+
+  def question
+    return forbidden_status if api_key_missing?
 
     question = Question.where({ share: true }).first
     return head :no_content if question.nil?
@@ -16,8 +24,7 @@ class ApplicationController < ActionController::Base
   end
 
   def questions
-    tenant = Tenant.where(id: params['tenant_id'].to_i).first
-    return render json: {}, status: :forbidden unless tenant && params['api_key'] == tenant.api_key
+    return forbidden_status if api_key_missing?
 
     questions = Question.where :share => true
 
