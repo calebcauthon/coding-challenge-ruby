@@ -24,6 +24,14 @@ class ApplicationControllerSingleQuestionsEndpointTest < ActionController::TestC
     get_authorized 'question', { params: { id: question.id } }
     assert_response 204
   end
+
+  test "should return the user that asked the question" do
+    user = User.create!(name: 'asker')
+    question = Question.create!(share: true, title: 'question-3', user_id: user.id)
+
+    get_authorized 'question', { params: { id: question.id } }
+    assert_equal 'asker', JSON.parse(response.body)['user']['name']
+  end
 end
 
 class ApplicationControllerAllQuestionsEndpointTest < ActionController::TestCase

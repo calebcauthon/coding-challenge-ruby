@@ -3,14 +3,14 @@ class ApplicationController < ActionController::Base
     question = Question.where({ share: true }).first
     return head :no_content if question.nil?
 
-    return render json: question.to_json
+    return render json: question.to_json(include: [:user])
   end
 
   def questions
     tenant = Tenant.where(id: params['tenant_id'].to_i).first
     return render json: {}, status: :forbidden unless tenant && params['api_key'] == tenant.api_key
 
-    questions = Question.includes(:user, :answers).where :share => true
+    questions = Question.where :share => true
 
     tenant = Tenant.where(id: params['tenant_id'].to_i).first
     if tenant
