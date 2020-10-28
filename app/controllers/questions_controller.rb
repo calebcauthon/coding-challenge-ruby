@@ -2,20 +2,20 @@ class QuestionsController < ApplicationController
   before_action :require_api_key
   before_action :increment_api_request_count!
 
-  def question
-    one_question = shareable_questions.where({ id: params['id'] }).first
-
-    return head :no_content if one_question.nil?
-
-    render_question one_question
-  end
-
   def questions
     all_questions = shareable_questions
 
     return head :no_content unless all_questions.count > 0
 
     render_question all_questions
+  end
+
+  def question
+    one_question = shareable_questions.where({ id: params['id'] }).first
+
+    return head :no_content if one_question.nil?
+
+    render_question one_question
   end
 
   private
