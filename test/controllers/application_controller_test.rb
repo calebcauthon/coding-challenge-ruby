@@ -36,4 +36,24 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_equal 'answer-1', JSON.parse(response.body).first['answers'][0]['body']
     assert_equal 'answer-2', JSON.parse(response.body).first['answers'][1]['body']
   end
+
+  test "default api request count is zero" do
+    tenant = Tenant.create! name: 'tenant-1'
+    assert_equal 0, tenant.api_request_count
+  end
+
+  test "should increment the api request count for the tenant when getting questions" do
+    tenant1 = Tenant.create! name: 'tenant-1'
+    tenant2 = Tenant.create! name: 'tenant-2'
+    tenant3 = Tenant.create! name: 'tenant-3'
+    get :questions, { params: { tenant_id: tenant2.id } }
+
+    tenant1 = Tenant.where(name: 'tenant-1').first
+    tenant2 = Tenant.where(name: 'tenant-2').first
+    tenant3 = Tenant.where(name: 'tenant-3').first
+
+    assert_equal 0, tenant1.api_request_count
+    assert_equal 1, tenant2.api_request_count
+    assert_equal 0, tenant3.api_request_count
+  end
 end
