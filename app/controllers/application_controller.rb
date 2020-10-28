@@ -14,6 +14,10 @@ class ApplicationController < ActionController::Base
     tenant.save!
   end
 
+  def render_question question_entity
+    render json: question_entity.to_json(include: [:user, :answers])
+  end
+
   def question
     return forbidden_status if api_key_missing?
 
@@ -22,18 +26,16 @@ class ApplicationController < ActionController::Base
 
     increment_api_request_count!
 
-    return render json: question.to_json(include: [:user, :answers])
+    render_question question
   end
 
   def questions
     return forbidden_status if api_key_missing?
-
-    questions = Question.where :share => true
-
     increment_api_request_count!
+    questions = Question.where :share => true
 
     return head :no_content unless questions.count > 0
 
-    render json: questions.to_json(include: [:user, :answers])
+    render_question questions
   end
 end
