@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
     return forbidden_status if api_key_missing?
     increment_api_request_count!
 
-    question = Question.where({ share: true }).first
+    question = Question.where({ share: true, id: params['id'] }).first
     return head :no_content if question.nil?
 
     render_question question
