@@ -2,6 +2,6 @@ Rails.application.routes.draw do
   root 'welcome#index'
 
   get 'welcome/index'
-  get 'application/questions'
-  get 'application/question/:id', to: 'application#question'
+  get 'questions', to: 'questions#questions'
+  get 'question/:id', to: 'questions#question'
 end
