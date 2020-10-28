@@ -6,7 +6,7 @@ class ApplicationControllerSingleQuestionsEndpointTest < ActionController::TestC
 
   test "should return no content if there are no questions" do
     question_id = 1
-    get 'question', { params: { id: question_id } }
+    get_authorized 'question', { params: { id: question_id } }
     assert_response 204
   end
 
@@ -58,6 +58,30 @@ class ApplicationControllerSingleQuestionsEndpointTest < ActionController::TestC
     assert_equal 0, tenant1.api_request_count
     assert_equal 1, tenant2.api_request_count
     assert_equal 0, tenant3.api_request_count
+  end
+
+  test "should return 2xx if correct api_key is included" do
+    tenant1 = Tenant.create! name: 'tenant-10'
+    tenant2 = Tenant.create! name: 'tenant-20'
+    tenant3 = Tenant.create! name: 'tenant-30'
+    get :question, { params: { id: 1, api_key: tenant2.api_key, tenant_id: tenant2.id } }
+    assert_response 204
+  end
+
+  test "should return 403 if tenant api_key is not included" do
+    question = Question.create!(share: true, title: 'question-6', user: User.new)
+    get :question, { params: { id: question.id } }
+    assert_response 403
+  end
+
+  test "should return 403 if incorrect api_key is not included" do
+    question = Question.create!(share: true, title: 'question-7', user: User.new)
+
+    tenant1 = Tenant.create! name: 'tenant-10'
+    tenant2 = Tenant.create! name: 'tenant-20'
+    tenant3 = Tenant.create! name: 'tenant-30'
+    get :question, { params: { id: question.id, api_key: tenant1.api_key, tenant_id: tenant2.id } }
+    assert_response 403
   end
 end
 

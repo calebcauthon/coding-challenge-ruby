@@ -1,5 +1,8 @@
 class ApplicationController < ActionController::Base
   def question
+    tenant = Tenant.where(id: params['tenant_id'].to_i).first
+    return render json: {}, status: :forbidden unless tenant && params['api_key'] == tenant.api_key
+
     question = Question.where({ share: true }).first
     return head :no_content if question.nil?
 
