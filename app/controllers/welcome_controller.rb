@@ -4,6 +4,7 @@ class WelcomeController < ApplicationController
 
   def dashboard
     user_count = User.all.count
-    render :dashboard, :locals => { :user_count => user_count }
+    question_count = Question.all.count
+    render :dashboard, :locals => { :user_count => user_count, :question_count => question_count }
   end
 end
