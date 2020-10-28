@@ -12,8 +12,14 @@
 `docker run rails rake test`
 
 # Endpoints
-All questions for a tenant: `localhost:3000/questions?tenant_id=<TENANT_ID>&api_key=<API_KEY>`
-One question: `localhost:3000/questions?tenant_id=<TENANT_ID>&api_key=<API_KEY>`
+## All questions
+
+`localhost:3000/questions?tenant_id=<TENANT_ID>&api_key=<API_KEY>`
+
+
+## One auestion
+
+`localhost:3000/questions?tenant_id=<TENANT_ID>&api_key=<API_KEY>`
 
 # BacklotCars Rails Engineer Candidate Interview Project
 
