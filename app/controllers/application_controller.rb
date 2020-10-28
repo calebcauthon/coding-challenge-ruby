@@ -20,11 +20,10 @@ class ApplicationController < ActionController::Base
 
   def question
     return forbidden_status if api_key_missing?
+    increment_api_request_count!
 
     question = Question.where({ share: true }).first
     return head :no_content if question.nil?
-
-    increment_api_request_count!
 
     render_question question
   end

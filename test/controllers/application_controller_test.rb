@@ -60,6 +60,15 @@ class ApplicationControllerSingleQuestionsEndpointTest < ActionController::TestC
     assert_equal 0, tenant3.api_request_count
   end
 
+  test "should increment the api request count even if there are no questions" do
+    tenant = Tenant.create! name: 'tenant-1'
+    get :question, { params: { id: 1, tenant_id: tenant.id, api_key: tenant.api_key } }
+
+    tenant = Tenant.where(name: 'tenant-1').first
+
+    assert_equal 1, tenant.api_request_count
+  end
+
   test "should return 2xx if correct api_key is included" do
     tenant1 = Tenant.create! name: 'tenant-10'
     tenant2 = Tenant.create! name: 'tenant-20'
