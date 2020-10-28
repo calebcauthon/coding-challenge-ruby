@@ -1,12 +1,25 @@
 require 'test_helper'
 require 'json'
 
-class ApplicationControllerTest < ActionController::TestCase
-  def get_authorized *params
-    tenant = Tenant.create! name: 'tenant-authorized-1'
-    params[1] = { params: { api_key: tenant.api_key, tenant_id: tenant.id } }
-    get *params
+class ApplicationControllerSingleQuestionsEndpointTest < ActionController::TestCase
+  tests ApplicationController
+
+  test "should return no content if there are no questions" do
+    question_id = 1
+    get 'question', { params: { id: question_id } }
+    assert_response 204
   end
+
+  test "should return questions that are shareable" do
+    question = Question.create!(share: true, title: 'question-1', user: User.new)
+
+    get_authorized 'question', { params: { id: question.id } }
+    assert_equal 'question-1', JSON.parse(response.body)['title']
+  end
+end
+
+class ApplicationControllerAllQuestionsEndpointTest < ActionController::TestCase
+  tests ApplicationController
 
   test "should return no content if there are no questions" do
     get_authorized :questions

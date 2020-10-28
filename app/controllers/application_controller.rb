@@ -1,4 +1,11 @@
 class ApplicationController < ActionController::Base
+  def question
+    question = Question.where({ id: params['id'] }).first
+    return head :no_content if question.nil?
+
+    return render json: question.to_json
+  end
+
   def questions
     tenant = Tenant.where(id: params['tenant_id'].to_i).first
     return render json: {}, status: :forbidden unless tenant && params['api_key'] == tenant.api_key
